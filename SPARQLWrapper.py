@@ -25,4 +25,4 @@ selectQuery="?name"
 whereQuery="?s schema:name ?name ."
 results = execSPARQLQuery(selectQuery, whereQuery)
 
-
+print(results)
