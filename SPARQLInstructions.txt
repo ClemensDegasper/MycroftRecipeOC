@@ -1,0 +1,14 @@
+PREFIX schema: <http://schema.org/>
+	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    SELECT  ?pos ?text
+	FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+
+	WHERE {
+		?s a schema:Recipe .
+		?s schema:name "Cheesy Funeral Potatoes From Scratch" .
+    	?s schema:recipeInstructions ?instructions .
+    	?instructions schema:text ?text.
+    	?instructions schema:position ?pos
+        
+	} 
+ORDER BY ?pos
