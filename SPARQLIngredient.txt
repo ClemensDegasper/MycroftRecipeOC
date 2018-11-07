@@ -1,0 +1,13 @@
+PREFIX schema: <http://schema.org/>
+	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+
+    SELECT  ?ingredient
+	FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+
+	WHERE {
+		?s a schema:Recipe .
+  		?s ent:id "10532702".
+    		?s schema:recipeIngredient ?ingredient 
+        
+	} 
