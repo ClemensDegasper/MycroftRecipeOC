@@ -1,19 +1,23 @@
 	PREFIX schema: <http://schema.org/>
 	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    SELECT  *
+    PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+
+    SELECT  ?id ?name ?description ?totalTime  ?cookTime ?prepTime ?yield
 	FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
 
 	WHERE {
 		?s a schema:Recipe .
 		?s schema:name ?name .
-        ?s schema:recipeCuisine ?cuisine . 
-        ?s schema:description ?description .
-    	?s schema:recipeIngredient ?ingredient .
+        	?s schema:description ?description .
+    		?s schema:recipeIngredient ?ingredient .
    		FILTER regex(?ingredient, "Tomato", "i")
-    	?s schema:totalTime ?totalTime .
-        ?s schema:cookTime ?cookTime .
-        ?s schema:prepTime ?prepTime .
-    	?s schema:recipeYield ?yield
+        	?s schema:recipeIngredient ?ingredient2 .
+   		FILTER regex(?ingredient2, "chicken", "i")
+    		?s schema:totalTime ?totalTime .
+        	?s schema:cookTime ?cookTime .
+        	?s schema:prepTime ?prepTime .
+		?s ent:id ?id .
+    		?s schema:recipeYield ?yield
         
 	}  #ORDER BY ?s OFFSET 10 
 ORDER BY ?totalTime        

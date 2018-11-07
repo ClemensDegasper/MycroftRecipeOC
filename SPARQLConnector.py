@@ -2,8 +2,8 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 
 def execSPARQLQuery( selectQuery ,whereQuery ):
 	
-	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
-
+	
+	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph") 
 
 
 	query = """
@@ -13,7 +13,7 @@ def execSPARQLQuery( selectQuery ,whereQuery ):
 	WHERE {
 		?s a schema:Recipe .
 		%s
-	}
+	} LIMIT 10
 	""" % (selectQuery, whereQuery)
 
 	sparql.setReturnFormat(JSON)
