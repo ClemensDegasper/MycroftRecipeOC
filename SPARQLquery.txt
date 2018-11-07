@@ -10,7 +10,6 @@
         ?s schema:description ?description .
     	?s schema:recipeIngredient ?ingredient .
    		FILTER regex(?ingredient, "Tomato", "i")
-    	?s schema:recipeInstructions ?instructions .
     	?s schema:totalTime ?totalTime .
         ?s schema:cookTime ?cookTime .
         ?s schema:prepTime ?prepTime .
