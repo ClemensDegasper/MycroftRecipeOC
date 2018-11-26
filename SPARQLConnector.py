@@ -1,5 +1,5 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
-
+import pprint
 totalTriple = 538168
 
 def getRecipeByIngredient(ingredients):
@@ -88,6 +88,11 @@ def getInstructionsById(ID):
 	
 	return sparql.query().convert()
 		
-print(getRecipeByIngredient(["Tomato","chicken"]))
-print(getRecipeIngredientsById("10532702"))
-print(getInstructionsById("10532702"))
+#print(getRecipeByIngredient(["Tomato","chicken"]))
+#print(getRecipeIngredientsById("10532702"))
+#getInstructionsById("10532702")
+
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(getRecipeByIngredient(["Tomato"]))#["results"]["bindings"][0]["description"]["value"])
+pp.pprint(getInstructionsById(10663398))
+
