@@ -12,7 +12,7 @@ def getRecipeByIngredient(ingredients):
 			FILTER regex(?ingredient%s, "%s", "i")""" % (i,i,ingre)
 		i += 1
 		
-	print(whereQuery)
+	#print(whereQuery)
 	query = """
 		PREFIX schema: <http://schema.org/>
 		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
@@ -32,7 +32,7 @@ def getRecipeByIngredient(ingredients):
 		LIMIT 5
 	""" % (whereQuery)
 	
-	print(query)
+	#print(query)
 	
 	sparql.setReturnFormat(JSON)
  
@@ -56,7 +56,7 @@ def getRecipeIngredientsById(ID):
 	""" % (ID)
 	
 	sparql.setReturnFormat(JSON)
-	print(query)
+	#print(query)
  
 	sparql.setQuery(query)
 	
@@ -80,7 +80,7 @@ def getInstructionsById(ID):
 		}
 	""" % (ID)
 	
-	print(query)
+	#print(query)
 	
 	sparql.setReturnFormat(JSON)
  
