@@ -12,7 +12,7 @@ def getRecipeByIngredient(ingredients):
 			FILTER regex(?ingredient%s, "%s", "i")""" % (i,i,ingre)
 		i += 1
 		
-	#print(whereQuery)
+	print(whereQuery)
 	query = """
 		PREFIX schema: <http://schema.org/>
 		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
@@ -32,13 +32,129 @@ def getRecipeByIngredient(ingredients):
 		LIMIT 5
 	""" % (whereQuery)
 	
-	#print(query)
+	print(query)
 	
 	sparql.setReturnFormat(JSON)
  
 	sparql.setQuery(query)
 	
 	return sparql.query().convert()
+
+
+def getRecipeByKeywords(keywords):
+	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
+	
+	whereQuery = ""
+	i = 0
+	for key in keywords:
+		whereQuery += """?s schema:keywords ?keyword%s .
+			FILTER regex(?keyword%s, "%s", "i")""" % (i,i,key)
+		i += 1
+		
+	print(whereQuery)
+	query = """
+		PREFIX schema: <http://schema.org/>
+		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+		SELECT  ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield ?keywords
+		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+		WHERE {
+			?s a schema:Recipe .
+			?s schema:name ?name .
+			?s ent:id ?id .
+			?s schema:description ?description .
+			?s schema:totalTime ?totalTime .
+			?s schema:cookTime ?cookTime .
+			?s schema:prepTime ?prepTime .
+			?s schema:keywords ?keywords .
+			?s schema:recipeYield ?yield .
+			%s
+		} ORDER BY RAND()
+		LIMIT 5
+	""" % (whereQuery)
+	
+	print(query)
+	
+	sparql.setReturnFormat(JSON)
+ 
+	sparql.setQuery(query)
+	
+	return sparql.query().convert()
+
+def getRecipeByCategory(categories):
+	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
+	
+	whereQuery = ""
+	i = 0
+	for cat in categories:
+		whereQuery += """?s schema:recipeCategory ?cat%s .
+			FILTER regex(?cat%s, "%s", "i")""" % (i,i,cat)
+		i += 1
+		
+	print(whereQuery)
+	query = """
+		PREFIX schema: <http://schema.org/>
+		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+		SELECT  ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
+		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+		WHERE {
+			?s a schema:Recipe .
+			?s schema:name ?name .
+			?s ent:id ?id .
+			?s schema:description ?description .
+			?s schema:totalTime ?totalTime .
+			?s schema:cookTime ?cookTime .
+			?s schema:prepTime ?prepTime .
+			?s schema:recipeYield ?yield .
+			%s
+		} ORDER BY RAND()
+		LIMIT 5
+	""" % (whereQuery)
+	
+	print(query)
+	
+	sparql.setReturnFormat(JSON)
+ 
+	sparql.setQuery(query)
+	
+	return sparql.query().convert()
+	
+def getRecipeByCuisine(cuisine):
+	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
+	
+	whereQuery = ""
+	i = 0
+	for cui in cuisine:
+		whereQuery += """?s schema:recipeCuisine ?cui%s .
+			FILTER regex(?cui%s, "%s", "i")""" % (i,i,cui)
+		i += 1
+		
+	print(whereQuery)
+	query = """
+		PREFIX schema: <http://schema.org/>
+		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+		SELECT  ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
+		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+		WHERE {
+			?s a schema:Recipe .
+			?s schema:name ?name .
+			?s ent:id ?id .
+			?s schema:description ?description .
+			?s schema:totalTime ?totalTime .
+			?s schema:cookTime ?cookTime .
+			?s schema:prepTime ?prepTime .
+			?s schema:recipeYield ?yield .
+			%s
+		} ORDER BY RAND()
+		LIMIT 5
+	""" % (whereQuery)
+	
+	print(query)
+	
+	sparql.setReturnFormat(JSON)
+ 
+	sparql.setQuery(query)
+	
+	return sparql.query().convert()	
 
 
 def getRecipeIngredientsById(ID):
@@ -56,7 +172,7 @@ def getRecipeIngredientsById(ID):
 	""" % (ID)
 	
 	sparql.setReturnFormat(JSON)
-	#print(query)
+	print(query)
  
 	sparql.setQuery(query)
 	
@@ -80,17 +196,66 @@ def getInstructionsById(ID):
 		}
 	""" % (ID)
 	
-	#print(query)
+	print(query)
 	
 	sparql.setReturnFormat(JSON)
  
 	sparql.setQuery(query)
 	
 	return sparql.query().convert()
+	
+def getCategories():
+	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
+	
+	query = """
+		PREFIX schema: <http://schema.org/>
+		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+		SELECT distinct ?cat
+		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+		WHERE {
+			?s a schema:Recipe .
+			?s schema:recipeCategory ?cat .
+		}
+	"""
+	
+	print(query)
+	
+	sparql.setReturnFormat(JSON)
+ 
+	sparql.setQuery(query)
+	
+	return sparql.query().convert()	
+	
+def getCuisine():
+	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
+	
+	query = """
+		PREFIX schema: <http://schema.org/>
+		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+		SELECT distinct ?cui
+		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+		WHERE {
+			?s a schema:Recipe .
+			?s schema:recipeCuisine ?cui .
+		}
+	"""
+	
+	print(query)
+	
+	sparql.setReturnFormat(JSON)
+ 
+	sparql.setQuery(query)
+	
+	return sparql.query().convert()		
 		
 #print(getRecipeByIngredient(["Tomato","chicken"]))
 #print(getRecipeIngredientsById("10532702"))
 #getInstructionsById("10532702")
 
-#pp = pprint.PrettyPrinter(indent=4)
-#pp.pprint(getRecipeByIngredient(["Tomato"])["results"]["bindings"][0]["description"]["value"])
+pp = pprint.PrettyPrinter(indent=4)
+#pp.pprint(getRecipeByIngredient(["Tomato","salt","sugar","olives"]))#["results"]["bindings"][0]["description"]["value"])
+#pp.pprint(getInstructionsById(10663398))
+pp.pprint(getRecipeByCuisine(["german"]))#["results"]["bindings"][0]["description"]["value"])
+
+pp.pprint(getCuisine())
+
