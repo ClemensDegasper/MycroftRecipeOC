@@ -1,0 +1,14 @@
+sparql query für - keyword suche
+		 - cuisine suche
+		 - category suche
+		 - alle cuisine typen
+		 - alle category typen
+		 - query ergebnis sortierung, dass relevante sachen zuerst kommen, wie auf der homepage
+		 - verbesserte keywords suche, such keyword in titel, description, zutaten ... erstelle ranking je nach wie oft und 		  	   wo es vorkommt
+		 - erweiterte suche, suche nach typ oder cuisine mit einer zutat ("give me an italian recipe with chicken")
+
+mycroft skill   - rezept suche mit mehreren zutaten, ("give me a recipe with tomatoes chicken and onions"), filter the ingredients 			  from text and use query for multiple ingredients, should also work with only one ingredient
+		- rezept suche ("give me a italian recipe, give me a gluten free recipe"), sucht user nach cuisine oder category -> 			  benutze die jeweiligen querys, falls nicht nimm keywords query
+		- erweiterte suche, suche nach küchen oder typ mit zutat ("give me an italian recipe with chicken")
+		- step by step koch anleitung für rezept
+
