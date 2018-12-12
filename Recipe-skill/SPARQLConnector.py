@@ -1,4 +1,5 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
+import json
 import pprint
 totalTriple = 538168
 
@@ -16,7 +17,7 @@ def getRecipeByIngredient(ingredients):
 	query = """
 		PREFIX schema: <http://schema.org/>
 		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
-		SELECT  ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
+		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield ?keywords
 		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
 		WHERE {
 			?s a schema:Recipe .
@@ -27,9 +28,10 @@ def getRecipeByIngredient(ingredients):
 			?s schema:cookTime ?cookTime .
 			?s schema:prepTime ?prepTime .
 			?s schema:recipeYield ?yield .
+			?s schema:keywords ?keywords .
 			%s
-		} ORDER BY RAND()
-		LIMIT 5
+		}
+		LIMIT 100
 	""" % (whereQuery)
 	
 	print(query)
@@ -38,7 +40,47 @@ def getRecipeByIngredient(ingredients):
  
 	sparql.setQuery(query)
 	
-	return sparql.query().convert()
+	result = sparql.query().convert()
+	
+	orderedResult = []
+	
+	for r in result["results"]["bindings"]:
+		res = 0
+		for i in ingredients:
+			#print(r)
+			#print(i)
+			res += evalIngredientInRecipe(i,r)
+			#print(res)
+		#print(res)
+		#print(r["name"]["value"])
+		orderedResult.append([r,res])
+	
+	#print(orderedResult)
+	data = sorted(orderedResult,key=lambda x: x[1], reverse=True)
+	
+	data = [x[0] for x in data]
+	print(data)
+	print(data[0]["name"]["value"])
+	return data
+
+def evalIngredientInRecipe(ingre, jsonSet):
+	name = jsonSet["name"]["value"]
+	description = jsonSet["description"]["value"]
+	keywords = jsonSet["keywords"]["value"]
+	
+	count = 0
+	
+	#print(name)
+	#print(ingre)
+	#print(keywords)
+	
+	
+	count += name.lower().count(ingre.lower())
+	count += description.lower().count(ingre.lower())
+	count += keywords.lower().count(ingre.lower())
+
+	
+	return count
 
 
 def getRecipeByKeywords(keywords):
@@ -55,7 +97,7 @@ def getRecipeByKeywords(keywords):
 	query = """
 		PREFIX schema: <http://schema.org/>
 		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
-		SELECT  ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield ?keywords
+		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield ?keywords
 		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
 		WHERE {
 			?s a schema:Recipe .
@@ -94,7 +136,7 @@ def getRecipeByCategory(categories):
 	query = """
 		PREFIX schema: <http://schema.org/>
 		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
-		SELECT  ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
+		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
 		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
 		WHERE {
 			?s a schema:Recipe .
@@ -132,7 +174,7 @@ def getRecipeByCuisine(cuisine):
 	query = """
 		PREFIX schema: <http://schema.org/>
 		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
-		SELECT  ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
+		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
 		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
 		WHERE {
 			?s a schema:Recipe .
@@ -252,10 +294,10 @@ def getCuisine():
 #print(getRecipeIngredientsById("10532702"))
 #getInstructionsById("10532702")
 
-pp = pprint.PrettyPrinter(indent=4)
+#pp = pprint.PrettyPrinter(indent=4)
 #pp.pprint(getRecipeByIngredient(["Tomato","salt","sugar","olives"]))#["results"]["bindings"][0]["description"]["value"])
 #pp.pprint(getInstructionsById(10663398))
-pp.pprint(getRecipeByCuisine(["german"]))#["results"]["bindings"][0]["description"]["value"])
+#pp.pprint(getRecipeByCuisine(["german"]))#["results"]["bindings"][0]["description"]["value"])
 
-pp.pprint(getCuisine())
-
+#pp.pprint(getCuisine())
+getRecipeByIngredient(["chicken","salt"])
