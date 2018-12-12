@@ -30,8 +30,8 @@ def getRecipeByIngredient(ingredients):
 			?s schema:recipeYield ?yield .
 			?s schema:keywords ?keywords .
 			%s
-		}
-		LIMIT 100
+		} ORDER BY RAND()
+		
 	""" % (whereQuery)
 	
 	print(query)
