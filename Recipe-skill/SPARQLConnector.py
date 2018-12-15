@@ -1,18 +1,48 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
-import json
 import pprint
 totalTriple = 538168
 
-def getRecipeByIngredient(ingredients):
+def getRecipe(ingredients="", cuisine = "", categories = "", keywords=""):
+	if ingredients == "" and cuisine == "" and categories == "" and keywords == "":
+		print("error: no parameters were given")
+		return;
 	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
 	
 	whereQuery = ""
-	i = 0
-	for ingre in ingredients:
-		whereQuery += """?s schema:recipeIngredient ?ingredient%s .
-			FILTER regex(?ingredient%s, "%s", "i")""" % (i,i,ingre)
-		i += 1
+	
+	if ingredients != "":
+		i = 0
+		for ingre in ingredients:
+			whereQuery += """?s schema:recipeIngredient ?ingredient%s .
+				FILTER regex(?ingredient%s, "%s", "i")""" % (i,i,ingre)
+			i += 1
+	
+	if cuisine != "":
+		i = 0
+	
+		for cui in cuisine:
+			whereQuery += """?s schema:recipeCuisine ?cui%s .
+				FILTER regex(?cui%s, "%s", "i")""" % (i,i,cui)
+			i += 1
+	
+	if categories != "":
+		i = 0
+	
+		for cat in categories:
+			whereQuery += """?s schema:recipeCategory ?cat%s .
+				FILTER regex(?cat%s, "%s", "i")""" % (i,i,cat)
+			i += 1
 		
+	if keywords != "":
+		i = 0
+		
+		for key in keywords:
+			whereQuery += """?s schema:keywords ?keyword%s .
+				FILTER regex(?keyword%s, "%s", "i")""" % (i,i,key)
+			i += 1
+		
+	
+	
 	print(whereQuery)
 	query = """
 		PREFIX schema: <http://schema.org/>
@@ -60,7 +90,7 @@ def getRecipeByIngredient(ingredients):
 	
 	data = [x[0] for x in data]
 	print(data)
-	print(data[0]["name"]["value"])
+
 	return data
 
 def evalIngredientInRecipe(ingre, jsonSet):
@@ -81,122 +111,6 @@ def evalIngredientInRecipe(ingre, jsonSet):
 
 	
 	return count
-
-
-def getRecipeByKeywords(keywords):
-	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
-	
-	whereQuery = ""
-	i = 0
-	for key in keywords:
-		whereQuery += """?s schema:keywords ?keyword%s .
-			FILTER regex(?keyword%s, "%s", "i")""" % (i,i,key)
-		i += 1
-		
-	print(whereQuery)
-	query = """
-		PREFIX schema: <http://schema.org/>
-		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
-		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield ?keywords
-		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
-		WHERE {
-			?s a schema:Recipe .
-			?s schema:name ?name .
-			?s ent:id ?id .
-			?s schema:description ?description .
-			?s schema:totalTime ?totalTime .
-			?s schema:cookTime ?cookTime .
-			?s schema:prepTime ?prepTime .
-			?s schema:keywords ?keywords .
-			?s schema:recipeYield ?yield .
-			%s
-		} ORDER BY RAND()
-		LIMIT 5
-	""" % (whereQuery)
-	
-	print(query)
-	
-	sparql.setReturnFormat(JSON)
- 
-	sparql.setQuery(query)
-	
-	return sparql.query().convert()
-
-def getRecipeByCategory(categories):
-	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
-	
-	whereQuery = ""
-	i = 0
-	for cat in categories:
-		whereQuery += """?s schema:recipeCategory ?cat%s .
-			FILTER regex(?cat%s, "%s", "i")""" % (i,i,cat)
-		i += 1
-		
-	print(whereQuery)
-	query = """
-		PREFIX schema: <http://schema.org/>
-		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
-		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
-		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
-		WHERE {
-			?s a schema:Recipe .
-			?s schema:name ?name .
-			?s ent:id ?id .
-			?s schema:description ?description .
-			?s schema:totalTime ?totalTime .
-			?s schema:cookTime ?cookTime .
-			?s schema:prepTime ?prepTime .
-			?s schema:recipeYield ?yield .
-			%s
-		} ORDER BY RAND()
-		LIMIT 5
-	""" % (whereQuery)
-	
-	print(query)
-	
-	sparql.setReturnFormat(JSON)
- 
-	sparql.setQuery(query)
-	
-	return sparql.query().convert()
-	
-def getRecipeByCuisine(cuisine):
-	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
-	
-	whereQuery = ""
-	i = 0
-	for cui in cuisine:
-		whereQuery += """?s schema:recipeCuisine ?cui%s .
-			FILTER regex(?cui%s, "%s", "i")""" % (i,i,cui)
-		i += 1
-		
-	print(whereQuery)
-	query = """
-		PREFIX schema: <http://schema.org/>
-		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
-		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
-		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
-		WHERE {
-			?s a schema:Recipe .
-			?s schema:name ?name .
-			?s ent:id ?id .
-			?s schema:description ?description .
-			?s schema:totalTime ?totalTime .
-			?s schema:cookTime ?cookTime .
-			?s schema:prepTime ?prepTime .
-			?s schema:recipeYield ?yield .
-			%s
-		} ORDER BY RAND()
-		LIMIT 5
-	""" % (whereQuery)
-	
-	print(query)
-	
-	sparql.setReturnFormat(JSON)
- 
-	sparql.setQuery(query)
-	
-	return sparql.query().convert()	
 
 
 def getRecipeIngredientsById(ID):
@@ -290,6 +204,130 @@ def getCuisine():
 	
 	return sparql.query().convert()		
 		
+		
+
+'''
+def getRecipeByKeywords(keywords):
+	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
+	
+	whereQuery = ""
+	i = 0
+	for key in keywords:
+		whereQuery += """?s schema:keywords ?keyword%s .
+			FILTER regex(?keyword%s, "%s", "i")""" % (i,i,key)
+		i += 1
+		
+	print(whereQuery)
+	query = """
+		PREFIX schema: <http://schema.org/>
+		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield ?keywords
+		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+		WHERE {
+			?s a schema:Recipe .
+			?s schema:name ?name .
+			?s ent:id ?id .
+			?s schema:description ?description .
+			?s schema:totalTime ?totalTime .
+			?s schema:cookTime ?cookTime .
+			?s schema:prepTime ?prepTime .
+			?s schema:keywords ?keywords .
+			?s schema:recipeYield ?yield .
+			%s
+		} ORDER BY RAND()
+		LIMIT 5
+	""" % (whereQuery)
+	
+	print(query)
+	
+	sparql.setReturnFormat(JSON)
+ 
+	sparql.setQuery(query)
+	
+	return sparql.query().convert()
+'''
+'''
+def getRecipeByCategory(categories):
+	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
+	
+	whereQuery = ""
+	i = 0
+	for cat in categories:
+		whereQuery += """?s schema:recipeCategory ?cat%s .
+			FILTER regex(?cat%s, "%s", "i")""" % (i,i,cat)
+		i += 1
+		
+	print(whereQuery)
+	query = """
+		PREFIX schema: <http://schema.org/>
+		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
+		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+		WHERE {
+			?s a schema:Recipe .
+			?s schema:name ?name .
+			?s ent:id ?id .
+			?s schema:description ?description .
+			?s schema:totalTime ?totalTime .
+			?s schema:cookTime ?cookTime .
+			?s schema:prepTime ?prepTime .
+			?s schema:recipeYield ?yield .
+			%s
+		} ORDER BY RAND()
+		LIMIT 5
+	""" % (whereQuery)
+	
+	print(query)
+	
+	sparql.setReturnFormat(JSON)
+ 
+	sparql.setQuery(query)
+	
+	return sparql.query().convert()
+'''
+
+'''
+def getRecipeByCuisine(cuisine):
+	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
+	
+	whereQuery = ""
+	i = 0
+	for cui in cuisine:
+		whereQuery += """?s schema:recipeCuisine ?cui%s .
+			FILTER regex(?cui%s, "%s", "i")""" % (i,i,cui)
+		i += 1
+		
+	print(whereQuery)
+	query = """
+		PREFIX schema: <http://schema.org/>
+		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield
+		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+		WHERE {
+			?s a schema:Recipe .
+			?s schema:name ?name .
+			?s ent:id ?id .
+			?s schema:description ?description .
+			?s schema:totalTime ?totalTime .
+			?s schema:cookTime ?cookTime .
+			?s schema:prepTime ?prepTime .
+			?s schema:recipeYield ?yield .
+			%s
+		} ORDER BY RAND()
+		LIMIT 5
+	""" % (whereQuery)
+	
+	print(query)
+	
+	sparql.setReturnFormat(JSON)
+ 
+	sparql.setQuery(query)
+	
+	return sparql.query().convert()	
+'''
+
+		
+		
 #print(getRecipeByIngredient(["Tomato","chicken"]))
 #print(getRecipeIngredientsById("10532702"))
 #getInstructionsById("10532702")
@@ -300,4 +338,4 @@ def getCuisine():
 #pp.pprint(getRecipeByCuisine(["german"]))#["results"]["bindings"][0]["description"]["value"])
 
 #pp.pprint(getCuisine())
-getRecipeByIngredient(["chicken","salt"])
+getRecipe(cuisine=["italian"], keywords=["chicken"])

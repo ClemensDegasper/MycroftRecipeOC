@@ -17,7 +17,7 @@ class RecipeSkill(MycroftSkill):
     def handle_hello_world_intent(self, message):
         ingredients = message.data.get("Ingredients")
         # todo make nice array from ingredients if multiple ingredients as input
-        result = SparqlCon.getRecipeByIngredient([ingredients])[0]
+        result = SparqlCon.getRecipe(ingredients=[ingredients])[0]
         name = result["name"]["value"]
         description = result["description"]["value"]
         self.speak_dialog("looking.for.recipe", data={"name": name, "description": description})
