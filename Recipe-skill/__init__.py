@@ -17,10 +17,10 @@ class RecipeSkill(MycroftSkill):
     @intent_handler(IntentBuilder("").require("search.recipe.with").require("Ingredients").build())
     def handle_hello_world_intent(self, message):
         ingredients = message.data.get("Ingredients")
-        # remove and
-        ingredients = ingredients.replace("and", "")
         # split ingredients
         ingredients = re.split("\W+", ingredients)
+        # remove and
+        while "and" in ingredients: ingredients.remove("and")
         #print(ingredients)
         result = SparqlCon.getRecipe(ingredients=ingredients)[0]
         name = result["name"]["value"]
