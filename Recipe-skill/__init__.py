@@ -5,6 +5,7 @@ from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill, intent_handler
 from mycroft.util.log import LOG
 import RecipeSkill.SPARQLConnector as SparqlCon
+import re
 
 class RecipeSkill(MycroftSkill):
 
@@ -16,8 +17,12 @@ class RecipeSkill(MycroftSkill):
     @intent_handler(IntentBuilder("").require("search.recipe.with").require("Ingredients").build())
     def handle_hello_world_intent(self, message):
         ingredients = message.data.get("Ingredients")
-        # todo make nice array from ingredients if multiple ingredients as input
-        result = SparqlCon.getRecipe(ingredients=[ingredients])[0]
+        # remove and
+        ingredients = ingredients.replace("and", "")
+        # split ingredients
+        ingredients = re.split("\W+", ingredients)
+        #print(ingredients)
+        result = SparqlCon.getRecipe(ingredients=ingredients)[0]
         name = result["name"]["value"]
         description = result["description"]["value"]
         self.speak_dialog("looking.for.recipe", data={"name": name, "description": description})
