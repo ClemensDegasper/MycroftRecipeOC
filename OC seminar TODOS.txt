@@ -10,5 +10,11 @@ sparql query für - keyword suche
 mycroft skill   - rezept suche mit mehreren zutaten, ("give me a recipe with tomatoes chicken and onions"), filter the ingredients 			  from text and use query for multiple ingredients, should also work with only one ingredient
 		- rezept suche ("give me a italian recipe, give me a gluten free recipe"), sucht user nach cuisine oder category -> 			  benutze die jeweiligen querys, falls nicht nimm keywords query
 		- erweiterte suche, suche nach küchen oder typ mit zutat ("give me an italian recipe with chicken")
-		- step by step koch anleitung für rezept
+		- step by step koch anleitung für rezept -> https://github.com/MycroftAI/skill-wiki/tree/443c892a2fbefb0c090ac7d9aa67146da97761df
+ 
 
+
+-step by step:
+	- "show me the ingredients" -> handler für zutaten vom gefundenen rezept
+	- "show me the steps" -> handler schritte (0)
+	- "next step" 
