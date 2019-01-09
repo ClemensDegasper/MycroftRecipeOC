@@ -17,16 +17,22 @@ class RecipeSkill(MycroftSkill):
     @intent_handler(IntentBuilder("").require("search.recipe.with").require("Ingredients").build())
     def handle_hello_world_intent(self, message):
         ingredients = message.data.get("Ingredients")
-        # split ingredients
-        ingredients = re.split("\W+", ingredients)
-        # remove and
-        while "and" in ingredients: ingredients.remove("and")
+        ingredients = parseMessage(ingredients)
         #print(ingredients)
         result = SparqlCon.getRecipe(ingredients=ingredients)[0]
         name = result["name"]["value"]
         description = result["description"]["value"]
         self.speak_dialog("looking.for.recipe", data={"name": name, "description": description})
+        self.set_context("recipe", result["id"]["value"])
 
+    @intent_handler(IntentBuilder("").require("give.CatCui").build())
+    def handle_categorie_cuisine_intent(self, message):
+        catCui = message.data.get("CatCui")
+        catCui = parseMessage(catCui)
+        result = SparqlCon.getRecipe(cuisine=catCui)[0]
+        name = result["name"]["value"]
+        description = result["description"]["value"]
+        self.speak_dialog("looking.for.recipe", data={"name": name, "description": description})
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
@@ -41,3 +47,10 @@ class RecipeSkill(MycroftSkill):
 # Note that it's outside the class itself.
 def create_skill():
     return RecipeSkill()
+
+def parseMessage(message):
+	# split message
+	message = re.split("\W+", message)
+	# remove and
+	while "and" in message: message.remove("and")
+	return message
