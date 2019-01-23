@@ -89,7 +89,7 @@ def getRecipe(ingredients="", cuisine = "", categories = "", keywords=""):
 	data = sorted(orderedResult,key=lambda x: x[1], reverse=True)
 	
 	data = [x[0] for x in data]
-	print(data)
+	#print(data)
 
 	return data
 
@@ -338,4 +338,4 @@ def getRecipeByCuisine(cuisine):
 #pp.pprint(getRecipeByCuisine(["german"]))#["results"]["bindings"][0]["description"]["value"])
 
 #pp.pprint(getCuisine())
-getRecipe(cuisine=["italian"], keywords=["chicken"])
+#getRecipe(cuisine=["italian"], keywords=["chicken"])
