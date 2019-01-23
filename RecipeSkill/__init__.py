@@ -30,7 +30,8 @@ class RecipeSkill(MycroftSkill):
         print("cuisine handler")
         catCui = message.data.get("Ingredients")
         catCui = parseMessage(catCui)
-        result = SparqlCon.getRecipe(cuisine=catCui)[0]
+        result = getCatOrCui(catCui)
+       
         self.currentRecipe = result
         name = result["name"]["value"]
         description = result["description"]["value"]
@@ -64,3 +65,11 @@ def parseMessage(message):
 	# remove and
 	while "and" in message: message.remove("and")
 	return message
+
+def getCatOrCui(catCui):
+	result = None
+	try:
+		 result = SparqlCon.getRecipe(cuisine=catCui)[0]
+	except IndexError:
+		result = SparqlCon.getRecipe(categories=catCui)[0]
+	return result

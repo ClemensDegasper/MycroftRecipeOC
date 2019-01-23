@@ -8,9 +8,9 @@ PREFIX schema: <http://schema.org/>
 	WHERE {
 		?s a schema:Recipe .
   		?s ent:id "10532702".
-    	?s schema:recipeInstructions ?instructions .
-    	?instructions schema:text ?text.
-    	?instructions schema:position ?pos
+    		?s schema:recipeInstructions ?instructions .
+    		?instructions schema:text ?text.
+    		?instructions schema:position ?pos
         
 	} 
 ORDER BY ?pos

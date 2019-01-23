@@ -22,8 +22,15 @@ class RecipeSkill(MycroftSkill):
         result = SparqlCon.getRecipe(ingredients=ingredients)[0]
         name = result["name"]["value"]
         description = result["description"]["value"]
-        self.speak_dialog("looking.for.recipe", data={"name": name, "description": description})
         self.set_context("recipe", result["id"]["value"])
+        self.speak_dialog("looking.for.recipe", data={"name": name, "description": description})
+
+        
+    @intent_handler(IntentBuilder("").require("search.recipe.with").require("Ingredients").require("recipe").build())
+    def handle_step_intent(self, message):
+        test = message.data.get("recipe")
+        self.speak_dialog("looking.for.recipe", data={"name": test, "description": test})
+        
 
     @intent_handler(IntentBuilder("").require("give.CatCui").build())
     def handle_categorie_cuisine_intent(self, message):
