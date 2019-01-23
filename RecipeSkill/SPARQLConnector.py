@@ -64,7 +64,7 @@ def getRecipe(ingredients="", cuisine = "", categories = "", keywords=""):
 		
 	""" % (whereQuery)
 	
-	print(query)
+	#print(query)
 	
 	sparql.setReturnFormat(JSON)
  
@@ -89,7 +89,7 @@ def getRecipe(ingredients="", cuisine = "", categories = "", keywords=""):
 	data = sorted(orderedResult,key=lambda x: x[1], reverse=True)
 	
 	data = [x[0] for x in data]
-	print(data)
+	#print(data)
 
 	return data
 
@@ -128,7 +128,7 @@ def getRecipeIngredientsById(ID):
 	""" % (ID)
 	
 	sparql.setReturnFormat(JSON)
-	print(query)
+	#print(query)
  
 	sparql.setQuery(query)
 	
@@ -157,13 +157,13 @@ def getInstructionsById(ID):
 		}
 	""" % (ID)
 	
-	print(query)
+	#print(query)
 	
 	sparql.setReturnFormat(JSON)
  
 	sparql.setQuery(query)
 	
-	return sparql.query().convert()
+	return sparql.query().convert()["results"]["bindings"]
 	
 def getCategories():
 	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
@@ -179,7 +179,7 @@ def getCategories():
 		}
 	"""
 	
-	print(query)
+	#print(query)
 	
 	sparql.setReturnFormat(JSON)
  
@@ -201,7 +201,7 @@ def getCuisine():
 		}
 	"""
 	
-	print(query)
+	#print(query)
 	
 	sparql.setReturnFormat(JSON)
  
@@ -343,4 +343,4 @@ def getRecipeByCuisine(cuisine):
 #pp.pprint(getRecipeByCuisine(["german"]))#["results"]["bindings"][0]["description"]["value"])
 
 #pp.pprint(getCuisine())
-#pp.pprint(getInstructionsById(getRecipe(cuisine=["italian"], keywords=["chicken"])[0]["id"]["value"]))
+#pp.pprint(getRecipe(cuisine=["italian"], keywords=["chicken"])[0])
