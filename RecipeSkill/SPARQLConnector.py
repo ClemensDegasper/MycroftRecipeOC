@@ -1,5 +1,5 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
-import pprint
+import pprint as pp
 totalTriple = 538168
 
 def getRecipe(ingredients="", cuisine = "", categories = "", keywords=""):
@@ -132,9 +132,14 @@ def getRecipeIngredientsById(ID):
  
 	sparql.setQuery(query)
 	
-	return sparql.query().convert()
+	return parseIngredientsToList(sparql.query().convert())
 	
-
+def parseIngredientsToList(unparsedIngredients):
+    result = []
+    for ingredient in unparsedIngredients["results"]["bindings"]:
+        result.append(ingredient["ingredient"]["value"])
+    return result
+    
 def getInstructionsById(ID):
 	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph") 
 	
@@ -338,4 +343,4 @@ def getRecipeByCuisine(cuisine):
 #pp.pprint(getRecipeByCuisine(["german"]))#["results"]["bindings"][0]["description"]["value"])
 
 #pp.pprint(getCuisine())
-getRecipe(cuisine=["italian"], keywords=["chicken"])
+pp.pprint(getRecipeIngredientsById(getRecipe(cuisine=["italian"], keywords=["chicken"])[0]["id"]["value"]))
