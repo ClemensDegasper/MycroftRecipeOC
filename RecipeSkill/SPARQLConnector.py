@@ -135,9 +135,9 @@ def getRecipeIngredientsById(ID):
 	return parseIngredientsToList(sparql.query().convert())
 	
 def parseIngredientsToList(unparsedIngredients):
-    result = []
+    result = ""
     for ingredient in unparsedIngredients["results"]["bindings"]:
-        result.append(ingredient["ingredient"]["value"])
+        result += ingredient["ingredient"]["value"] + " , "
     return result
     
 def getInstructionsById(ID):
@@ -343,4 +343,4 @@ def getRecipeByCuisine(cuisine):
 #pp.pprint(getRecipeByCuisine(["german"]))#["results"]["bindings"][0]["description"]["value"])
 
 #pp.pprint(getCuisine())
-pp.pprint(getRecipeIngredientsById(getRecipe(cuisine=["italian"], keywords=["chicken"])[0]["id"]["value"]))
+#pp.pprint(getInstructionsById(getRecipe(cuisine=["italian"], keywords=["chicken"])[0]["id"]["value"]))

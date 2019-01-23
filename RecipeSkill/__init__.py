@@ -24,7 +24,6 @@ class RecipeSkill(MycroftSkill):
         name = result["name"]["value"]
         description = result["description"]["value"]
         self.speak_dialog("looking.for.recipe", data={"name": name, "description": description})
-        self.set_context("recipe", result["id"]["value"])
 
     @intent_handler(IntentBuilder("").require("give.me").require("Ingredients").build())
     def handle_categorie_cuisine_intent(self, message):
@@ -42,9 +41,8 @@ class RecipeSkill(MycroftSkill):
         if(self.currentRecipe == None):
             self.speak_dialog("no.recipe")
             return
-        ingredients = SparqlCon.getRecipeIngredientsById(self.currentRecipe["id"]["value"])
-        print(ingredients)                    
-        #self.speak_dialog("looking.for.recipe", data={"name": name, "description": description})
+        ingredients = SparqlCon.getRecipeIngredientsById(self.currentRecipe["id"]["value"])                
+        self.speak_dialog("read.ingredients", data={"ingredients": ingredients})
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
