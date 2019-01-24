@@ -47,7 +47,7 @@ def getRecipe(ingredients="", cuisine = "", categories = "", keywords=""):
 	query = """
 		PREFIX schema: <http://schema.org/>
 		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
-		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield ?keywords
+		SELECT distinct ?name ?id ?description ?totalTime ?cookTime ?prepTime ?yield ?keywords ?cui
 		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
 		WHERE {
 			?s a schema:Recipe .
@@ -59,6 +59,7 @@ def getRecipe(ingredients="", cuisine = "", categories = "", keywords=""):
 			?s schema:prepTime ?prepTime .
 			?s schema:recipeYield ?yield .
 			?s schema:keywords ?keywords .
+			?s schema:recipeCuisine ?cui .
 			%s
 		} ORDER BY RAND()
 		
@@ -165,6 +166,29 @@ def getInstructionsById(ID):
 	
 	return sparql.query().convert()["results"]["bindings"]
 	
+def getCatgeoriesById(ID):
+	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph") 
+	
+	query = """
+		PREFIX schema: <http://schema.org/>
+		PREFIX ent: <http://www.ontotext.com/owlim/entity#>
+		SELECT  ?cat
+		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
+		WHERE {
+			?s a schema:Recipe .
+			?s ent:id "%s".
+			?s schema:recipeCategory ?cat 
+		}
+	""" % (ID)
+	
+	#print(query)
+	
+	sparql.setReturnFormat(JSON)
+ 
+	sparql.setQuery(query)
+	
+	return sparql.query().convert()["results"]["bindings"]
+	
 def getCategories():
 	sparql = SPARQLWrapper("http://graphdb.sti2.at:8080/repositories/broker-graph")
 	
@@ -175,7 +199,7 @@ def getCategories():
 		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
 		WHERE {
 			?s a schema:Recipe .
-			?s schema:recipeCategory ?cat .
+			?s schema:recipeCategory ?cat 
 		}
 	"""
 	
@@ -197,7 +221,7 @@ def getCuisine():
 		FROM <https://broker.semantify.it/graph/O7PY8ri5T2/WxGcA2Nj1O/latest>
 		WHERE {
 			?s a schema:Recipe .
-			?s schema:recipeCuisine ?cui .
+			?s schema:recipeCuisine ?cui 
 		}
 	"""
 	
@@ -344,3 +368,4 @@ def getRecipeByCuisine(cuisine):
 
 #pp.pprint(getCuisine())
 #pp.pprint(getRecipe(cuisine=["italian"], keywords=["chicken"])[0])
+pp.pprint(getCatgeoriesById("10532702"))

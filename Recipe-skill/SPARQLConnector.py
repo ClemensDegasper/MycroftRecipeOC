@@ -328,7 +328,7 @@ def getRecipeByCuisine(cuisine):
 
 		
 		
-#print(getRecipeByIngredient(["Tomato","chicken"]))
+print(getRecipeByIngredient(["Tomato","chicken"]))
 #print(getRecipeIngredientsById("10532702"))
 #getInstructionsById("10532702")
 

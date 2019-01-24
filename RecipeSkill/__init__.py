@@ -28,12 +28,16 @@ class RecipeSkill(MycroftSkill):
         description = result["description"]["value"]
         self.speak_dialog("looking.for.recipe", data={"name": name, "description": description})
 
-    @intent_handler(IntentBuilder("").require("give.me").require("Ingredients").build())
+    @intent_handler(IntentBuilder("").require("search").require("CatCui").require("recipe").optionally("with").optionally("Ingredients").build())
     def handle_categorie_cuisine_intent(self, message):
         #print("cuisine handler")
-        catCui = message.data.get("Ingredients")
+        catCui = message.data.get("CatCui")
+        ingredients = message.data.get("Ingredients")
+        print(ingredients)
         catCui = self.parseMessage(catCui)
-        result = self.getCatOrCui(catCui)
+        if (ingredients != None):
+            ingredients = self.parseMessage(ingredients)
+        result = self.getCatOrCuiAndIngri(catCui, ingredients)
         self.ResetGlobalVars()
         self.currentRecipe = result
         name = result["name"]["value"]
@@ -47,6 +51,21 @@ class RecipeSkill(MycroftSkill):
             return
         ingredients = SparqlCon.getRecipeIngredientsById(self.currentRecipe["id"]["value"])                
         self.speak_dialog("read.ingredients", data={"ingredients": ingredients})
+
+    @intent_handler(IntentBuilder("").require("read.info").build())
+    def handle_read_info_intent(self, message):
+        if(self.currentRecipe == None):
+            self.speak_dialog("no.recipe")
+            return
+        SparqlCon.getCategories
+        dialog = self.currentRecipe["keywords"]["value"]
+        dialog += ", the cuisine is " + self.currentRecipe["cui"]["value"]
+        dialog += ", the preperation time is " + self.parseTime(self.currentRecipe["prepTime"]["value"])
+        dialog += ", the cooking time is "+ self.parseTime(self.currentRecipe["cookTime"]["value"])
+        dialog += ", and the total time is "+ self.parseTime(self.currentRecipe["totalTime"]["value"])
+        self.speak_dialog("read.info", data={"info": dialog})
+
+
 
     @intent_handler(IntentBuilder("").require("read.instructions").build())
     def handle_read_instructions_intent(self, message):
@@ -72,6 +91,23 @@ class RecipeSkill(MycroftSkill):
         
         self.ReadInstructionStep()
 
+    def parseTime(self, timeStr):
+        timeMessage = ""
+        print(timeStr)
+        time = re.split('(\d+)',timeStr)
+        for i in range(len(time)):
+            if time[i].isdigit():
+                if time[i] != "00":
+                    if time[i+1] == "H":
+                        if timeMessage != "":
+                            timeMessage += " and "
+                        timeMessage += time[i] + " hours "
+                    elif time[i+1] == "M":
+                        if timeMessage != "":
+                            timeMessage += " and "
+                        timeMessage += time[i] + " minutes"
+        return timeMessage
+
     def parseMessage(self, message):
 	    # split message
 	    message = re.split("\W+", message)
@@ -79,12 +115,18 @@ class RecipeSkill(MycroftSkill):
 	    while "and" in message: message.remove("and")
 	    return message
 
-    def getCatOrCui(self, catCui):
+    def getCatOrCuiAndIngri(self, catCui, ingredients):
         result = None
         try:
-             result = SparqlCon.getRecipe(cuisine=catCui)[0]
+            if ingredients == None:
+                result = SparqlCon.getRecipe(cuisine=catCui)[0]
+            else:
+                result = SparqlCon.getRecipe(cuisine=catCui, ingredients=ingredients)[0]
         except IndexError:
-            result = SparqlCon.getRecipe(categories=catCui)[0]
+            if ingredients == None:
+                result = SparqlCon.getRecipe(categories=catCui)[0]
+            else:
+                result = SparqlCon.getRecipe(categories=catCui, ingredients=ingredients)[0]
         return result
 	    
     def ReadNextInstructionStep(self):
@@ -93,8 +135,11 @@ class RecipeSkill(MycroftSkill):
 
 	
     def ReadInstructionStep(self):
-        instructions = self.currentInstructions[self.currentInstructionStep]["text"]["value"]
-        self.speak_dialog("read.instructions", data={"instructions": instructions})
+        try:
+            instructions = self.currentInstructions[self.currentInstructionStep]["text"]["value"]
+            self.speak_dialog("read.instructions", data={"instructions": instructions})
+        except IndexError:
+            self.speak_dialog("no.steps")
 
     # this function should be called every time before a new recipe is set
     def ResetGlobalVars(self):
