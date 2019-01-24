@@ -1,4 +1,0 @@
-give me mit categorie und cuisine
-
-nach gluten freien/itailian recipe with chicken suchen
-- require("search").require("catcui").require("ingredients)
